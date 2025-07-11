@@ -58,9 +58,7 @@ KP_Begin
     xdotool click 1
 
 # Right click
-KP_Insert
-    xdotool click 3
-KP_0
+KP_Enter
     xdotool click 3
 EOF
 
