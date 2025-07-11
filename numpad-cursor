@@ -1,70 +1,62 @@
 #!/bin/bash
 
 command -v sxhkd > /dev/null 2>&1 || { echo >&2 "I require sxhkd but it's not installed. Install it. Aborting."; exit 1; }
+
 CONFIG_DIR="$HOME/.config/sxhkd"
 CONFIG_FILE="$CONFIG_DIR/sxhkdrc"
+HELPER="/tmp/numpad-cursor-helper"
+
 mkdir -p "$CONFIG_DIR"
 
+cat > "$HELPER" <<'EOS'
+#!/bin/bash
+dx="$1"
+dy="$2"
+steps=14
+delay=0.006
+for i in $(seq 1 $steps); do
+    xdotool mousemove_relative -- "$dx" "$dy"
+    sleep "$delay"
+done
+EOS
+
+chmod +x "$HELPER"
+
 cat > "$CONFIG_FILE" <<EOF
-# Move mouse up
+# Smooth default move (speed 8)
 KP_8
-    xdotool mousemove_relative -- 0 -31
+    $HELPER 0 -8
 KP_Up
-    xdotool mousemove_relative -- 0 -31
+    $HELPER 0 -8
 
-# Move mouse down
 KP_2
-    xdotool mousemove_relative -- 0 31
+    $HELPER 0 8
 KP_Down
-    xdotool mousemove_relative -- 0 31
+    $HELPER 0 8
 
-# Move mouse left
 KP_4
-    xdotool mousemove_relative -- -31 0
+    $HELPER -8 0
 KP_Left
-    xdotool mousemove_relative -- -31 0
+    $HELPER -8 0
 
-# Move mouse right
 KP_6
-    xdotool mousemove_relative -- 31 0
+    $HELPER 8 0
 KP_Right
-    xdotool mousemove_relative -- 31 0
+    $HELPER 8 0
 
-# Speedy
-ctrl + KP_4
-    xdotool mousemove_relative -- -260 0
-ctrl + KP_Left
-    xdotool mousemove_relative -- -260 0
-
-ctrl + KP_6
-    xdotool mousemove_relative -- 260 0
-ctrl + KP_Right
-    xdotool mousemove_relative -- 260 0
-
-ctrl + KP_8
-    xdotool mousemove_relative -- 0 -260
-ctrl + KP_Up
-    xdotool mousemove_relative -- 0 -260
-
-ctrl + KP_2
-    xdotool mousemove_relative -- 0 260
-ctrl + KP_Down
-    xdotool mousemove_relative -- 0 260
-
-# Left click
+# Clicks
 KP_5
     xdotool click 1
 KP_Begin
     xdotool click 1
 
-# Right click
 KP_Enter
     xdotool click 3
 EOF
 
-echo "#  Config written to $CONFIG_FILE"
+echo "# Config written to $CONFIG_FILE"
+echo "# Helper script written to $HELPER"
 
 pkill sxhkd 2>/dev/null
-
 sxhkd -c "$CONFIG_FILE" &
-echo "#  sxhkd started with universal numpad bindings"
+echo "# sxhkd started with default smooth speed (8)"
