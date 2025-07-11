@@ -8,27 +8,48 @@ mkdir -p "$CONFIG_DIR"
 cat > "$CONFIG_FILE" <<EOF
 # Move mouse up
 KP_8
-    xdotool mousemove_relative -- 0 -30
+    xdotool mousemove_relative -- 0 -31
 KP_Up
-    xdotool mousemove_relative -- 0 -30
+    xdotool mousemove_relative -- 0 -31
 
 # Move mouse down
 KP_2
-    xdotool mousemove_relative -- 0 30
+    xdotool mousemove_relative -- 0 31
 KP_Down
-    xdotool mousemove_relative -- 0 30
+    xdotool mousemove_relative -- 0 31
 
 # Move mouse left
 KP_4
-    xdotool mousemove_relative -- -30 0
+    xdotool mousemove_relative -- -31 0
 KP_Left
-    xdotool mousemove_relative -- -30 0
+    xdotool mousemove_relative -- -31 0
 
 # Move mouse right
 KP_6
-    xdotool mousemove_relative -- 30 0
+    xdotool mousemove_relative -- 31 0
 KP_Right
-    xdotool mousemove_relative -- 30 0
+    xdotool mousemove_relative -- 31 0
+
+# Speedy
+ctrl + KP_4
+    xdotool mousemove_relative -- -260 0
+ctrl + KP_Left
+    xdotool mousemove_relative -- -260 0
+
+ctrl + KP_6
+    xdotool mousemove_relative -- 260 0
+ctrl + KP_Right
+    xdotool mousemove_relative -- 260 0
+
+ctrl + KP_8
+    xdotool mousemove_relative -- 0 -260
+ctrl + KP_Up
+    xdotool mousemove_relative -- 0 -260
+
+ctrl + KP_2
+    xdotool mousemove_relative -- 0 260
+ctrl + KP_Down
+    xdotool mousemove_relative -- 0 260
 
 # Left click
 KP_5
