@@ -35,6 +35,12 @@ KP_5
     xdotool click 1
 KP_Begin
     xdotool click 1
+
+# Right click
+KP_Insert
+    xdotool click 3
+KP_0
+    xdotool click 3
 EOF
 
 echo "#  Config written to $CONFIG_FILE"
