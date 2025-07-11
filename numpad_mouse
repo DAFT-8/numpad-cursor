@@ -1,0 +1,45 @@
+#!/bin/bash
+
+command -v sxhkd > /dev/null 2>&1 || { echo >&2 "I require sxhkd but it's not installed. Install it. Aborting."; exit 1; }
+CONFIG_DIR="$HOME/.config/sxhkd"
+CONFIG_FILE="$CONFIG_DIR/sxhkdrc"
+mkdir -p "$CONFIG_DIR"
+
+cat > "$CONFIG_FILE" <<EOF
+# Move mouse up
+KP_8
+    xdotool mousemove_relative -- 0 -30
+KP_Up
+    xdotool mousemove_relative -- 0 -30
+
+# Move mouse down
+KP_2
+    xdotool mousemove_relative -- 0 30
+KP_Down
+    xdotool mousemove_relative -- 0 30
+
+# Move mouse left
+KP_4
+    xdotool mousemove_relative -- -30 0
+KP_Left
+    xdotool mousemove_relative -- -30 0
+
+# Move mouse right
+KP_6
+    xdotool mousemove_relative -- 30 0
+KP_Right
+    xdotool mousemove_relative -- 30 0
+
+# Left click
+KP_5
+    xdotool click 1
+KP_Begin
+    xdotool click 1
+EOF
+
+echo "#  Config written to $CONFIG_FILE"
+
+pkill sxhkd 2>/dev/null
+
+sxhkd -c "$CONFIG_FILE" &
+echo "#  sxhkd started with universal numpad bindings"
