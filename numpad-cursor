@@ -1,48 +1,64 @@
 #!/bin/bash
 
-command -v sxhkd > /dev/null 2>&1 || { echo >&2 "I require sxhkd but it's not installed. Install it. Aborting."; exit 1; }
+command -v sxhkd > /dev/null 2>&1 || { echo >&2 "sxhkd is not installed. Aborting."; exit 1; }
 
 CONFIG_DIR="$HOME/.config/sxhkd"
 CONFIG_FILE="$CONFIG_DIR/sxhkdrc"
 HELPER="/tmp/numpad-cursor-helper"
+SPEED_FILE="/tmp/numpad-cursor-speed"
 
 mkdir -p "$CONFIG_DIR"
+echo 8 > "$SPEED_FILE"
 
 cat > "$HELPER" <<'EOS'
 #!/bin/bash
 dx="$1"
 dy="$2"
-steps=14
-delay=0.006
+speed_file="/tmp/numpad-cursor-speed"
+speed=$(cat "$speed_file" 2>/dev/null || echo 8)
+steps=5
+delay=0.007
 for i in $(seq 1 $steps); do
-    xdotool mousemove_relative -- "$dx" "$dy"
+    xdotool mousemove_relative -- $((dx * speed)) $((dy * speed))
     sleep "$delay"
 done
 EOS
 
 chmod +x "$HELPER"
 
+cat > "/tmp/numpad-cursor-speed-adjust" <<'EOS'
+#!/bin/bash
+delta="$1"
+speed_file="/tmp/numpad-cursor-speed"
+speed=$(cat "$speed_file" 2>/dev/null || echo 8)
+newspeed=$((speed + delta))
+[ "$newspeed" -lt 1 ] && newspeed=1
+echo "$newspeed" > "$speed_file"
+notify-send "Numpad Cursor Speed: $newspeed"
+EOS
+
+chmod +x "/tmp/numpad-cursor-speed-adjust"
+
 cat > "$CONFIG_FILE" <<EOF
-# Smooth default move (speed 8)
-KP_8
-    $HELPER 0 -8
+KP_7
+    $HELPER 0 -7
 KP_Up
-    $HELPER 0 -8
+    $HELPER 0 -7
 
 KP_2
-    $HELPER 0 8
+    $HELPER 0 7
 KP_Down
-    $HELPER 0 8
+    $HELPER 0 7
 
 KP_4
-    $HELPER -8 0
+    $HELPER -7 0
 KP_Left
-    $HELPER -8 0
+    $HELPER -7 0
 
 KP_6
-    $HELPER 8 0
+    $HELPER 7 0
 KP_Right
-    $HELPER 8 0
+    $HELPER 7 0
 
 # Clicks
 KP_5
@@ -52,6 +68,13 @@ KP_Begin
 
 KP_Enter
     xdotool click 3
+
+# Increase/Decrease speed
+KP_Add
+    /tmp/numpad-cursor-speed-adjust 1
+
+KP_Subtract
+    /tmp/numpad-cursor-speed-adjust -1
 EOF
 
 echo "# Config written to $CONFIG_FILE"
@@ -59,4 +82,4 @@ echo "# Helper script written to $HELPER"
 
 pkill sxhkd 2>/dev/null
 sxhkd -c "$CONFIG_FILE" &
-echo "# sxhkd started with default smooth speed (8)"
+echo "# sxhkd started with default smooth speed (7)"
