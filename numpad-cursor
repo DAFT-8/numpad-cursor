@@ -18,8 +18,8 @@ speed_file="/tmp/numpad-cursor-speed"
 speed=$(cat "$speed_file" 2>/dev/null || echo 2)
 steps=28
 delay=0
-for i in $(seq 1 $steps); do
-    xdotool mousemove_relative -- $((dx * speed)) $((dy * speed))
+for ((i = 0; i < steps; i++)); do
+    xdotool mousemove_relative -- "$((dx * speed))" "$((dy * speed))"
     sleep "$delay"
 done
 EOS
@@ -51,6 +51,31 @@ KP_Left
 KP_Right
     $HELPER 1 0
 
+# diagonal
+KP_7
+    $HELPER -1 -1
+
+KP_Home
+    $HELPER -1 -1
+
+KP_1
+    $HELPER -1  1
+
+KP_End
+    $HELPER -1  1
+
+KP_3
+    $HELPER 1  1
+
+KP_Next
+    $HELPER 1  1
+
+KP_9
+    $HELPER 1 -1
+
+KP_Prior
+    $HELPER 1 -1
+
 # Clicks
 KP_Insert
     xdotool click 1
@@ -58,13 +83,16 @@ KP_0
     xdotool click 1
 KP_Enter
     xdotool click 3
+KP_5
+    xdotool click 2
+KP_Begin
+    xdotool click 2
 
 # Increase/Decrease speed
-KP_Add
-    /tmp/numpad-cursor-speed-adjust 1
-
-KP_Subtract
-    /tmp/numpad-cursor-speed-adjust -1
+KP_Multiply
+    /tmp/numpad-cursor-speed-adjust 5
+KP_Divide
+    /tmp/numpad-cursor-speed-adjust -10
 EOF
 
 echo "# Config written to $CONFIG_FILE"
