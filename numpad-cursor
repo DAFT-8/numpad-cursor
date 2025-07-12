@@ -39,32 +39,23 @@ EOS
 chmod +x "/tmp/numpad-cursor-speed-adjust"
 
 cat > "$CONFIG_FILE" <<EOF
-KP_1
-    $HELPER 0 -1
 KP_Up
     $HELPER 0 -1
 
-KP_2
-    $HELPER 0 1
 KP_Down
     $HELPER 0 1
 
-KP_4
-    $HELPER -1 0
 KP_Left
     $HELPER -1 0
 
-KP_6
-    $HELPER 1 0
 KP_Right
     $HELPER 1 0
 
 # Clicks
-KP_5
+KP_Insert
     xdotool click 1
-KP_Begin
+KP_0
     xdotool click 1
-
 KP_Enter
     xdotool click 3
 
