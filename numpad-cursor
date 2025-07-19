@@ -103,11 +103,11 @@ KP_Subtract
     echo "xte 'mouseclick 4'"; xte 'mouseclick 4'
 EOF
 
-SAVED_DIR=$(pwd)/saved/
-mkdir -p $SAVED_DIR
-SAVED_FILE=$SAVED_DIR/$(date +%s).sh
+SAVED_DIR="$(pwd)/saved/"
+SAVED_FILE="$SAVED_DIR/$(date +%s).sh"
+mkdir -p "$SAVED_DIR"
 
-eval $(xdotool getmouselocation --shell)
+eval "$(xdotool getmouselocation --shell)"
 
 sxhkd -r "$SAVED_FILE" -c "$CONFIG_FILE"
 
