@@ -1,103 +1,100 @@
 #!/bin/bash
 
-command -v sxhkd > /dev/null 2>&1 || { echo >&2 "sxhkd is not installed. Aborting."; exit 1; }
+command -v sxhkd > /dev/null 2>&1 || {
+    echo >&2 "sxhkd is not installed. Aborting.";
+    exit 1;
+}
+
+xset r rate 200 50
+
+SPEED_FILE="/tmp/numpad-cursor-speed"
+echo 10 > "$SPEED_FILE"
 
 CONFIG_DIR="$HOME/.config/sxhkd"
 CONFIG_FILE="$CONFIG_DIR/sxhkdrc"
-HELPER="/tmp/numpad-cursor-helper"
-SPEED_FILE="/tmp/numpad-cursor-speed"
-
 mkdir -p "$CONFIG_DIR"
-echo 3 > "$SPEED_FILE"
-
-cat > "$HELPER" <<'EOS'
-#!/bin/bash
-dx="$1"
-dy="$2"
-speed_file="/tmp/numpad-cursor-speed"
-speed=$(cat "$speed_file" 2>/dev/null || echo 2)
-steps=28
-delay=0
-for ((i = 0; i < steps; i++)); do
-    xdotool mousemove_relative -- "$((dx * speed))" "$((dy * speed))"
-    sleep "$delay"
-done
-EOS
-
-chmod +x "$HELPER"
-
-cat > "/tmp/numpad-cursor-speed-adjust" <<'EOS'
-#!/bin/bash
-delta="$1"
-speed_file="/tmp/numpad-cursor-speed"
-speed=$(cat "$speed_file" 2>/dev/null || echo 1)
-newspeed=$((speed + delta))
-[ "$newspeed" -lt 1 ] && newspeed=1
-echo "$newspeed" > "$speed_file"
-EOS
-
-chmod +x "/tmp/numpad-cursor-speed-adjust"
 
 cat > "$CONFIG_FILE" <<EOF
 KP_Up
-    $HELPER 0 -1
+    xdotool mousemove_relative -- 0 -\$(cat $SPEED_FILE)
+KP_Up + alt
+    xdotool mousemove_relative -- 0 -3
 
 KP_Down
-    $HELPER 0 1
+    xdotool mousemove_relative -- 0 \$(cat $SPEED_FILE)
+KP_Down + alt
+    xdotool mousemove_relative -- 0 3
 
 KP_Left
-    $HELPER -1 0
+    xdotool mousemove_relative -- -\$(cat $SPEED_FILE) 0
+KP_Left + alt
+    xdotool mousemove_relative -- -3 0
 
 KP_Right
-    $HELPER 1 0
+    xdotool mousemove_relative -- \$(cat $SPEED_FILE) 0
+KP_Right + alt
+    xdotool mousemove_relative -- 3 0
 
-# diagonal
 KP_7
-    $HELPER -1 -1
-
+    xdotool mousemove_relative -- -\$(cat $SPEED_FILE) -\$(cat $SPEED_FILE)
+KP_7 + alt
+    xdotool mousemove_relative -- -3 -3
 KP_Home
-    $HELPER -1 -1
+    xdotool mousemove_relative -- -\$(cat $SPEED_FILE) -\$(cat $SPEED_FILE)
+KP_Home + alt
+    xdotool mousemove_relative -- -3 -3
 
 KP_1
-    $HELPER -1  1
-
+    xdotool mousemove_relative -- -\$(cat $SPEED_FILE) \$(cat $SPEED_FILE)
+KP_1 + alt
+    xdotool mousemove_relative -- -3 3
 KP_End
-    $HELPER -1  1
+    xdotool mousemove_relative -- -\$(cat $SPEED_FILE) \$(cat $SPEED_FILE)
+KP_End + alt
+    xdotool mousemove_relative -- -3 3
 
 KP_3
-    $HELPER 1  1
-
+    xdotool mousemove_relative -- \$(cat $SPEED_FILE) \$(cat $SPEED_FILE)
+KP_3 + alt
+    xdotool mousemove_relative -- 3 3
 KP_Next
-    $HELPER 1  1
+    xdotool mousemove_relative -- \$(cat $SPEED_FILE) \$(cat $SPEED_FILE)
+KP_Next + alt
+    xdotool mousemove_relative -- 3 3
 
 KP_9
-    $HELPER 1 -1
-
+    xdotool mousemove_relative -- \$(cat $SPEED_FILE) -\$(cat $SPEED_FILE)
+KP_9 + alt
+    xdotool mousemove_relative -- 3 -3
 KP_Prior
-    $HELPER 1 -1
+    xdotool mousemove_relative -- \$(cat $SPEED_FILE) -\$(cat $SPEED_FILE)
+KP_Prior + alt
+    xdotool mousemove_relative -- 3 -3
 
-# Clicks
 KP_Insert
     xdotool click 1
 KP_0
     xdotool click 1
+
 KP_Enter
     xdotool click 3
+
 KP_5
     xdotool click 2
 KP_Begin
     xdotool click 2
 
-# Increase/Decrease speed
 KP_Multiply
-    /tmp/numpad-cursor-speed-adjust 5
+    echo \$((\$(cat $SPEED_FILE) * 2)) > $SPEED_FILE
 KP_Divide
-    /tmp/numpad-cursor-speed-adjust -10
+    echo \$((\$(cat $SPEED_FILE) / 2 + 1)) > $SPEED_FILE
+
+KP_Add
+    xdotool click --clearmodifiers 5
+KP_Subtract
+    xdotool click --clearmodifiers 4
 EOF
 
-echo "# Config written to $CONFIG_FILE"
-echo "# Helper script written to $HELPER"
+sxhkd -c "$CONFIG_FILE"
 
-pkill sxhkd 2>/dev/null
-sxhkd -c "$CONFIG_FILE" &
-echo "# sxhkd started"
+xset r rate 500 10
