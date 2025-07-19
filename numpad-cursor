@@ -4,6 +4,14 @@ command -v sxhkd > /dev/null 2>&1 || {
     echo >&2 "sxhkd is not installed. Aborting.";
     exit 1;
 }
+command -v xdotool > /dev/null 2>&1 || {
+    echo >&2 "xdotool is not installed. Aborting."
+    exit 1
+}
+command -v xte > /dev/null 2>&1 || {
+    echo >&2 "xautomation is not installed. Aborting."
+    exit 1
+}
 
 xset r rate 200 50
 
@@ -72,17 +80,17 @@ KP_Prior + alt
     xdotool mousemove_relative -- 3 -3
 
 KP_Insert
-    xdotool click 1
+    xte 'mouseclick 1'
 KP_0
-    xdotool click 1
+    xte 'mouseclick 1'
 
 KP_Enter
-    xdotool click 3
+    xte 'mouseclick 3'
 
 KP_5
-    xdotool click 2
+    xte 'mouseclick 2'
 KP_Begin
-    xdotool click 2
+    xte 'mouseclick 2'
 
 KP_Multiply
     echo \$((\$(cat $SPEED_FILE) * 2)) > $SPEED_FILE
@@ -90,9 +98,9 @@ KP_Divide
     echo \$((\$(cat $SPEED_FILE) / 2 + 1)) > $SPEED_FILE
 
 KP_Add
-    xdotool click --clearmodifiers 5
+    xte 'mouseclick 5'
 KP_Subtract
-    xdotool click --clearmodifiers 4
+    xte 'mouseclick 4'
 EOF
 
 sxhkd -c "$CONFIG_FILE"
