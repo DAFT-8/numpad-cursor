@@ -116,6 +116,8 @@ eval "$(xdotool getmouselocation --shell)"
 
 trap "rm $SAVED_FILE; xset r rate 500 10; exit 1" SIGINT
 
+echo "NumDel to save and exit, Ctrl-C to exit."
+
 sxhkd -r "$SAVED_FILE" -c "$CONFIG_FILE"
 
 sed -i -e "1i #!/bin/sh\n\nxdotool mousemove $X $Y" "$SAVED_FILE"
