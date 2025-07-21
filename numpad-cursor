@@ -101,6 +101,11 @@ KP_Add
     echo "xte 'mouseclick 5'"; xte 'mouseclick 5'
 KP_Subtract
     echo "xte 'mouseclick 4'"; xte 'mouseclick 4'
+
+KP_0
+    killall sxhkd
+KP_Delete
+    killall sxhkd
 EOF
 
 SAVED_DIR="$(pwd)/saved/"
