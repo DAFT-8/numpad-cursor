@@ -109,6 +109,8 @@ mkdir -p "$SAVED_DIR"
 
 eval "$(xdotool getmouselocation --shell)"
 
+trap "rm $SAVED_FILE; exit 1" SIGINT
+
 sxhkd -r "$SAVED_FILE" -c "$CONFIG_FILE"
 
 sed -i -e "1i #!/bin/sh\n\nxdotool mousemove $X $Y" "$SAVED_FILE"
